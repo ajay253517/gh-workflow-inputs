@@ -1,42 +1,32 @@
-name: Deploy Application
-
 on:
   workflow_dispatch:
     inputs:
       logLevel:
         description: 'Log level'
         required: true
+        default: 'warning'
         type: choice
         options:
           - info
           - warning
           - debug
-      environment:
-        description: 'Target deployment environment'
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true
+        type: boolean
+      tags:
+        description: 'Test scenario tags'
         required: true
         type: string
-      deployment_target:
-        description: 'Deployment target'
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
         required: true
-        type: choice
-        options:
-          - web
-          - mobile
 
 jobs:
-  deploy:
+  print-tag:
     runs-on: ubuntu-latest
-
+    if:  ${{ inputs.print_tags }} 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Environment
-        run: echo "Setting up deployment environment: ${{ inputs.environment }}"
-
-      - name: Deploy Application
-        run: |
-          echo "Deploying to ${environment} environment with log level ${logLevel} for ${deployment_target}."
-
-      - name: Finalize Deployment
-        run: echo "Deployment completed successfully."
+      - name: Print the input tag to STDOUT
+        run: echo  The tags are ${{ inputs.tags }} 

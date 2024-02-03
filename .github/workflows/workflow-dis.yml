@@ -25,7 +25,6 @@ on:
         description: 'Environment to run tests against'
         type: environment
         required: false
-
 jobs:
   print-tag:
     runs-on: ubuntu-latest
@@ -33,7 +32,7 @@ jobs:
     steps:
       - name: Deploy Application
         run: |
-          echo "Deploying to ${environment} environment with log level ${logLevel} for ${deployment_target}."
-
+          echo "Deploying to ${environment} environment with log level ${logLevel} "
+          echo "Running deploy target on ${deployment_target}."
       - name: Finalize Deployment
         run: echo "Deployment completed successfully."

@@ -1,33 +1,52 @@
-name: Inputs Workflow
+name: Deploy Application
+
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
+      environment:
+        description: 'Target deployment environment'
         required: true
-        default: 'warning'
         type: choice
         options:
-          - info
-          - warning
-          - debug
-      print_tags:
-        description: 'True to print to STDOUT'
-        required: true
-        type: boolean
-      tags:
-        description: 'Test scenario tags'
+          - development
+          - staging
+          - production
+      version:
+        description: 'Application version to deploy'
         required: true
         type: string
-      environment:
-        description: 'Environment to run tests against'
-        type: environment
-        required: true
+      rollback:
+        description: 'True to rollback to a previous version'
+        required: false
+        type: boolean
+      deploy_script:
+        description: 'Custom deployment script'
+        required: false
+        type: string
 
 jobs:
-  print-tag:
+  deploy:
     runs-on: ubuntu-latest
-    if: ${{ inputs.print_tags }}
+
     steps:
-      - name: Print the input tag to STDOUT
-        run: echo "The tags are ${{ inputs.tags }}"
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Environment
+        run: echo "Setting up deployment environment: ${{ inputs.environment }}"
+
+      - name: Deploy Application
+        run: |
+          if [[ "${{ inputs.rollback }}" == "true" ]]; then
+            echo "Rolling back to previous version."
+            # Add rollback logic here
+          else
+            echo "Deploying version: ${{ inputs.version }}"
+            # Add deployment logic here
+          fi
+
+      - name: Custom Deployment Script
+        if: ${{ inputs.deploy_script }}
+        run: |
+          echo "Running custom deployment script:"
+          echo "${{ inputs.deploy_script }}"
